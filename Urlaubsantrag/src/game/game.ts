@@ -30,13 +30,7 @@ export class Game {
       const detectPixelColor = this.collisionCtx?.getImageData(e.x, e.y, 1, 1)
       const pc = detectPixelColor?.data
       this.targets.forEach((part: Target) => {
-        if (
-          part.randomColors[0] === pc?.[0] &&
-          part.randomColors[1] === pc?.[1] &&
-          part.randomColors[2] === pc?.[2] &&
-          this.ctx
-        ) {
-          part.markedForDeletion = true
+        if (part.detectHit(e.x, e.y) && this.ctx) {
           this.score?.increment()
           this.explosions.push(new Explosion(this.ctx, part.x, part.y, part.width))
         }
@@ -68,6 +62,7 @@ export class Game {
     }
 
     this.targets = this.targets.filter((part) => !part.markedForDeletion)
+    this.explosions = this.explosions.filter((part) => !part.markedForDeletion)
     requestAnimationFrame((timestamp: number) => this.animate(timestamp))
   }
 }

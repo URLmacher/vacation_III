@@ -6,6 +6,7 @@
   const canvas = ref<HTMLCanvasElement | null>(null)
   const collisionCanvas = ref<HTMLCanvasElement | null>(null)
   let game: Game | null = null
+  let gameStarted = ref<boolean>(false)
 
   onMounted((): void => {
     assertNotNullOrUndefined(canvas.value, 'canvas cannot be null or undefined')
@@ -19,15 +20,16 @@
   })
 
   const startGame = (): void => {
+    gameStarted.value = true
     game?.animate()
   }
 </script>
 
 <template>
   <div class="wrapper">
-    <canvas class="canvas" ref="collisionCanvas"></canvas>
     <canvas class="canvas" ref="canvas"></canvas>
-    <div class="menu">
+    <canvas class="canvas canvas--collision" ref="collisionCanvas"></canvas>
+    <div v-if="!gameStarted" class="menu">
       <button @click="startGame">Start</button>
     </div>
   </div>
@@ -38,6 +40,8 @@
     position: relative;
     top: 0;
     left: 0;
+    right: 0;
+    bottom: 0;
     height: 100%;
   }
 
@@ -45,9 +49,12 @@
     position: absolute;
     top: 0;
     left: 0;
-    height: 90%;
+    height: 100%;
     width: 100%;
-    /* background-color: blue; */
+  }
+
+  .canvas--collision {
+    opacity: 1;
   }
 
   .menu {

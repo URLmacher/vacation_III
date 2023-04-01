@@ -1,11 +1,10 @@
-import imgUrl from '../assets/sprites/raven.png'
+import imgUrl from '../assets/sprites/target.png'
 
 export class Target {
   public markedForDeletion: boolean = false
   public x: number = 0
   public y: number = 0
-  public width: number = 271
-  public randomColors: number[]
+  public width: number = 270
 
   private ctx: CanvasRenderingContext2D
   private collisionCtx: CanvasRenderingContext2D
@@ -19,10 +18,11 @@ export class Target {
   private spriteWidth: number = this.width
   private spriteHeight: number = this.height
   private frame: number = 0
-  private maxFrame: number = 4
+  private maxFrame: number = 9
   private timeToNextAnimation: number = 0
   private animationInterval: number = Math.random() * 50 + 50
   private color: string
+  private randomColors: number[]
 
   constructor(
     canvas: HTMLCanvasElement,
@@ -87,5 +87,13 @@ export class Target {
       this.width,
       this.height
     )
+  }
+
+  public detectHit(x: number, y: number): boolean {
+    if (y > this.y && y < this.y + this.height && x > this.x && x < this.x + this.width) {
+      this.markedForDeletion = true
+      return true
+    }
+    return false
   }
 }
