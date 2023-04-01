@@ -21,7 +21,12 @@
 
   const startGame = (): void => {
     gameStarted.value = true
-    game?.animate()
+    game?.start()
+  }
+
+  const stopGame = (): void => {
+    gameStarted.value = false
+    game?.stop()
   }
 </script>
 
@@ -29,8 +34,9 @@
   <div class="wrapper">
     <canvas class="canvas" ref="canvas"></canvas>
     <canvas class="canvas canvas--collision" ref="collisionCanvas"></canvas>
-    <div v-if="!gameStarted" class="menu">
-      <button @click="startGame">Start</button>
+    <div class="menu">
+      <button v-if="!gameStarted" @click="startGame">Start</button>
+      <button v-else @click="stopGame">Stop</button>
     </div>
   </div>
 </template>
@@ -54,7 +60,8 @@
   }
 
   .canvas--collision {
-    opacity: 1;
+    cursor: url('./assets/images/crosshairs.png'), crosshair;
+    opacity: 0;
   }
 
   .menu {
@@ -63,7 +70,7 @@
     left: 0;
     background-color: #fff;
     height: 10%;
-    width: 100%;
+    width: 10%;
     display: flex;
     align-items: center;
     justify-content: center;

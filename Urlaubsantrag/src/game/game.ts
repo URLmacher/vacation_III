@@ -8,7 +8,7 @@ export class Game {
   private canvas: HTMLCanvasElement
   private collisionCanvas: HTMLCanvasElement
 
-  private maxTargets: number = 10
+  private targetsLeft: number = 10
   private targets: Target[] = []
   private explosions: Explosion[] = []
   private score: Score | null = null
@@ -21,36 +21,36 @@ export class Game {
     this.collisionCanvas = collisionCanvas
     this.ctx = this.canvas.getContext('2d')
     this.collisionCtx = collisionCanvas.getContext('2d')
+  }
 
-    if (this.ctx) {
-      this.score = new Score(this.ctx)
-    }
+  public start(): void {
+    if (!this.ctx) return
+    this.score = new Score(this.ctx)
+    this.targets = []
+    this.explosions = []
+    this.targetsLeft = 10
 
-    window.addEventListener('click', (e) => {
-      const detectPixelColor = this.collisionCtx?.getImageData(e.x, e.y, 1, 1)
-      const pc = detectPixelColor?.data
-      this.targets.forEach((part: Target) => {
-        if (part.detectHit(e.x, e.y) && this.ctx) {
-          this.score?.increment()
-          this.explosions.push(new Explosion(this.ctx, part.x, part.y, part.width))
-        }
-      })
-    })
+    window.addEventListener('click', (e) => this.handleClick(e))
+    this.animate()
+  }
+
+  public stop(): void {
+    this.score = null
+    this.clearCanvas()
+    window.removeEventListener('click', (e) => this.handleClick(e))
   }
 
   public animate(timestamp: number = 0): void {
     if (!this.ctx || !this.collisionCtx) return
-
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
-    this.collisionCtx.clearRect(0, 0, this.collisionCanvas.width, this.collisionCanvas.height)
+    this.clearCanvas()
 
     const deltaTime = timestamp - this.lastAnimatonTime
     this.lastAnimatonTime = timestamp
     this.timeToNextAnimation += deltaTime
 
-    if (this.timeToNextAnimation > this.animationInterval && this.maxTargets) {
+    if (this.timeToNextAnimation > this.animationInterval && this.targetsLeft) {
       this.targets.push(new Target(this.canvas, this.ctx, this.collisionCtx))
-      this.maxTargets--
+      this.targetsLeft--
       this.timeToNextAnimation = 0
       this.targets.sort((a, b) => a.width - b.width)
     }
@@ -63,6 +63,22 @@ export class Game {
 
     this.targets = this.targets.filter((part) => !part.markedForDeletion)
     this.explosions = this.explosions.filter((part) => !part.markedForDeletion)
-    requestAnimationFrame((timestamp: number) => this.animate(timestamp))
+    if (this.score) {
+      requestAnimationFrame((timestamp: number) => this.animate(timestamp))
+    }
+  }
+
+  private clearCanvas(): void {
+    this.ctx?.clearRect(0, 0, this.canvas.width, this.canvas.height)
+    this.collisionCtx?.clearRect(0, 0, this.collisionCanvas.width, this.collisionCanvas.height)
+  }
+
+  private handleClick(e: MouseEvent): void {
+    this.targets.forEach((part: Target) => {
+      if (part.detectHit(e.x, e.y) && this.ctx) {
+        this.score?.increment()
+        this.explosions.push(new Explosion(this.ctx, part.x, part.y, part.width))
+      }
+    })
   }
 }
