@@ -13,3 +13,10 @@
 //   this.score?.increment()
 //   this.explosions.push(new Explosion(this.ctx, part.x, part.y, part.width))
 // }
+// //
+//     this.randomColors = [
+//       Math.floor(Math.random() * 255),
+//       Math.floor(Math.random() * 255),
+//       Math.floor(Math.random() * 255)
+//     ]
+//     this.color = `rgb(${this.randomColors[0]},${this.randomColors[1]},${this.randomColors[2]})`

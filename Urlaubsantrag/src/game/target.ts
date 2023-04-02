@@ -7,7 +7,6 @@ export class Target {
   public width: number = 270
 
   private ctx: CanvasRenderingContext2D
-  private collisionCtx: CanvasRenderingContext2D
   private canvas: HTMLCanvasElement
 
   private height: number = 194
@@ -21,16 +20,12 @@ export class Target {
   private maxFrame: number = 9
   private timeToNextAnimation: number = 0
   private animationInterval: number = Math.random() * 50 + 50
-  private color: string
-  private randomColors: number[]
 
   constructor(
     canvas: HTMLCanvasElement,
     ctx: CanvasRenderingContext2D,
-    collisionCtx: CanvasRenderingContext2D
   ) {
     this.ctx = ctx
-    this.collisionCtx = collisionCtx
     this.canvas = canvas
     this.x = this.canvas.width
     this.y = Math.random() * (this.canvas.height - this.height)
@@ -44,12 +39,6 @@ export class Target {
     this.width = this.spriteWidth * sizeModifier
     this.height = this.spriteHeight * sizeModifier
 
-    this.randomColors = [
-      Math.floor(Math.random() * 255),
-      Math.floor(Math.random() * 255),
-      Math.floor(Math.random() * 255)
-    ]
-    this.color = `rgb(${this.randomColors[0]},${this.randomColors[1]},${this.randomColors[2]})`
   }
 
   public update(deltaTime: number): void {
@@ -74,8 +63,6 @@ export class Target {
   }
 
   public draw(): void {
-    this.collisionCtx.fillStyle = this.color
-    this.collisionCtx.fillRect(this.x, this.y, this.width, this.height)
     this.ctx.drawImage(
       this.image,
       this.frame * this.spriteWidth,

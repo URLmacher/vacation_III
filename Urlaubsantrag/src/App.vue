@@ -4,19 +4,15 @@
   import { Game } from './game/game'
 
   const canvas = ref<HTMLCanvasElement | null>(null)
-  const collisionCanvas = ref<HTMLCanvasElement | null>(null)
   let game: Game | null = null
   let gameStarted = ref<boolean>(false)
 
   onMounted((): void => {
     assertNotNullOrUndefined(canvas.value, 'canvas cannot be null or undefined')
-    assertNotNullOrUndefined(collisionCanvas.value, 'collisionCanvas cannot be null or undefined')
     canvas.value.width = window.innerWidth
     canvas.value.height = window.innerHeight
-    collisionCanvas.value.width = window.innerWidth
-    collisionCanvas.value.height = window.innerHeight
 
-    game = new Game(canvas.value, collisionCanvas.value)
+    game = new Game(canvas.value)
   })
 
   const startGame = (): void => {
@@ -33,7 +29,6 @@
 <template>
   <div class="wrapper">
     <canvas class="canvas" ref="canvas"></canvas>
-    <canvas class="canvas canvas--collision" ref="collisionCanvas"></canvas>
     <div class="menu">
       <button v-if="!gameStarted" @click="startGame">Start</button>
       <button v-else @click="stopGame">Stop</button>
@@ -41,7 +36,7 @@
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
   .wrapper {
     position: relative;
     top: 0;
@@ -57,12 +52,9 @@
     left: 0;
     height: 100%;
     width: 100%;
+    cursor: url('./assets/images/crosshairs.png'), crosshair;
   }
 
-  .canvas--collision {
-    cursor: url('./assets/images/crosshairs.png'), crosshair;
-    opacity: 0;
-  }
 
   .menu {
     position: absolute;

@@ -4,9 +4,7 @@ import { Explosion } from './explosion'
 
 export class Game {
   private ctx: CanvasRenderingContext2D | null
-  private collisionCtx: CanvasRenderingContext2D | null
   private canvas: HTMLCanvasElement
-  private collisionCanvas: HTMLCanvasElement
 
   private targetsLeft: number = 10
   private targets: Target[] = []
@@ -16,11 +14,9 @@ export class Game {
   private timeToNextAnimation: number = 0
   private animationInterval: number = 500
 
-  constructor(canvas: HTMLCanvasElement, collisionCanvas: HTMLCanvasElement) {
+  constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas
-    this.collisionCanvas = collisionCanvas
     this.ctx = this.canvas.getContext('2d')
-    this.collisionCtx = collisionCanvas.getContext('2d')
   }
 
   public start(): void {
@@ -36,12 +32,13 @@ export class Game {
 
   public stop(): void {
     this.score = null
+    this.targets = []
     this.clearCanvas()
     window.removeEventListener('click', (e) => this.handleClick(e))
   }
 
   public animate(timestamp: number = 0): void {
-    if (!this.ctx || !this.collisionCtx) return
+    if (!this.ctx) return
     this.clearCanvas()
 
     const deltaTime = timestamp - this.lastAnimatonTime
@@ -49,7 +46,7 @@ export class Game {
     this.timeToNextAnimation += deltaTime
 
     if (this.timeToNextAnimation > this.animationInterval && this.targetsLeft) {
-      this.targets.push(new Target(this.canvas, this.ctx, this.collisionCtx))
+      this.targets.push(new Target(this.canvas, this.ctx))
       this.targetsLeft--
       this.timeToNextAnimation = 0
       this.targets.sort((a, b) => a.width - b.width)
@@ -70,7 +67,6 @@ export class Game {
 
   private clearCanvas(): void {
     this.ctx?.clearRect(0, 0, this.canvas.width, this.canvas.height)
-    this.collisionCtx?.clearRect(0, 0, this.collisionCanvas.width, this.collisionCanvas.height)
   }
 
   private handleClick(e: MouseEvent): void {
