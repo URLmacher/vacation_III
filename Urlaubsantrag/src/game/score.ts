@@ -1,6 +1,6 @@
 export class Score {
+  public points: number = 0
   private ctx: CanvasRenderingContext2D
-  private points: number = 0
 
   constructor(ctx: CanvasRenderingContext2D) {
     this.ctx = ctx
@@ -16,5 +16,9 @@ export class Score {
 
   public increment(): void {
     this.points++
+  }
+
+  public reset(): void {
+    this.points = 0
   }
 }

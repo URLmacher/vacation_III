@@ -65,18 +65,4 @@
       pointer-events: auto;
     }
   }
-
-  input[type='checkbox']:checked ~ .overlay {
-    pointer-events: auto;
-    opacity: 1;
-    -webkit-transform: scale(1);
-    transform: scale(1);
-  }
-
-  input[type='checkbox']:checked ~ .modal {
-    pointer-events: auto;
-    opacity: 1;
-    -webkit-transform: translate(-50%, -50%) scale(1);
-    transform: translate(-50%, -50%) scale(1);
-  }
 </style>

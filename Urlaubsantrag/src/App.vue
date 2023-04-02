@@ -1,14 +1,15 @@
 <script setup lang="ts">
-  import { onMounted, ref } from 'vue'
+  import { onBeforeUnmount, onMounted, ref } from 'vue'
   import { assertNotNullOrUndefined } from '@/utils/assert'
   import DialogOverlay from '@/components/DialogOverlay.vue'
-  import { Game } from './game/game'
+  import FireWork from '@/components/FireWork.vue'
+  import { Game, GAME_OVER } from './game/game'
   import { texts } from './data/texts'
 
-  const canvas = ref<HTMLCanvasElement | null>(null)
-  const showMenu = ref<boolean>(true)
   let game: Game | null = null
-  let gameStarted = ref<boolean>(false)
+  const canvas = ref<HTMLCanvasElement | null>(null)
+  const gameStarted = ref<boolean>(false)
+  const newGamePlus = ref<boolean>(false)
 
   onMounted((): void => {
     assertNotNullOrUndefined(canvas.value, 'canvas cannot be null or undefined')
@@ -16,18 +17,23 @@
     canvas.value.height = window.innerHeight
 
     game = new Game(canvas.value)
+    window.addEventListener(GAME_OVER, () => handleStopGame())
   })
 
   const startGame = (): void => {
     gameStarted.value = true
     game?.start()
-    showMenu.value = false
   }
 
-  const stopGame = (): void => {
+  const handleStopGame = (): void => {
     gameStarted.value = false
-    game?.stop()
+    newGamePlus.value = true
   }
+
+  onBeforeUnmount((): void => {
+    window.removeEventListener(GAME_OVER, () => handleStopGame())
+    game?.stop()
+  })
 </script>
 
 <template>
@@ -37,12 +43,14 @@
       :class="{ 'vacation__canvas--game-started': gameStarted }"
       ref="canvas"
     ></canvas>
-    <DialogOverlay :open="showMenu">
+    <DialogOverlay :open="!gameStarted">
       <h1 class="vacation__title">{{ texts.vacationTitle }}</h1>
       <h3 class="vacation__sub-title">{{ texts.vacationYear }}</h3>
-
-      <button v-if="!gameStarted" @click="startGame">{{ texts.btnText }}</button>
-      <button v-else @click="stopGame">Stop</button>
+      <div v-if="newGamePlus" class="vacation__confirmed">
+        <FireWork />
+        <p class="vacation__confirmed-text">{{ texts.allConfirmed }}</p>
+      </div>
+      <button @click="startGame">{{ newGamePlus ? texts.btnTextRoundTwo : texts.btnText }}</button>
     </DialogOverlay>
   </main>
 </template>
@@ -83,6 +91,27 @@
       margin-bottom: 50px;
       font-size: 56px;
       animation: tilt-shaking 0.8s infinite;
+    }
+
+    &__confirmed {
+      height: 150px;
+      width: 150px;
+      border-radius: 50%;
+      background-color: var(--color-green);
+      border: 2px solid var(--color-text);
+      position: absolute;
+      left: 50%;
+      top: -105px;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    &__confirmed-text {
+      color: var(--color-pink);
+      font-size: 26px;
     }
   }
 </style>

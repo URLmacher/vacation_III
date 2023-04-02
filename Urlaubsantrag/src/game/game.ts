@@ -2,14 +2,19 @@ import { Score } from './score'
 import { Target } from './target'
 import { Explosion } from './explosion'
 
+export const GAME_OVER = 'game-over'
+
 export class Game {
   private ctx: CanvasRenderingContext2D | null
   private canvas: HTMLCanvasElement
 
-  private targetsLeft: number = 10
   private targets: Target[] = []
   private explosions: Explosion[] = []
   private score: Score | null = null
+  private clickHandler = (e: MouseEvent) => this.handleClick(e)
+
+  private maxTargets: number = 10
+  private targetsLeft: number = this.maxTargets
   private lastAnimatonTime: number = 0
   private timeToNextAnimation: number = 0
   private animationInterval: number = 500
@@ -17,24 +22,27 @@ export class Game {
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas
     this.ctx = this.canvas.getContext('2d')
+    this.score = this.ctx ? new Score(this.ctx) : null
   }
 
   public start(): void {
     if (!this.ctx) return
-    this.score = new Score(this.ctx)
     this.targets = []
     this.explosions = []
-    this.targetsLeft = 10
+    this.targetsLeft = this.maxTargets
 
-    window.addEventListener('click', (e) => this.handleClick(e))
+    window.addEventListener('click', this.clickHandler)
     this.animate()
   }
 
   public stop(): void {
-    this.score = null
+    this.score?.reset()
     this.targets = []
     this.clearCanvas()
-    window.removeEventListener('click', (e) => this.handleClick(e))
+    window.removeEventListener('click', this.clickHandler)
+
+    const event = new Event(GAME_OVER)
+    window.dispatchEvent(event)
   }
 
   public animate(timestamp: number = 0): void {
@@ -60,7 +68,10 @@ export class Game {
 
     this.targets = this.targets.filter((part) => !part.markedForDeletion)
     this.explosions = this.explosions.filter((part) => !part.markedForDeletion)
-    if (this.score) {
+
+    if (this.score?.points === this.maxTargets) {
+      this.stop()
+    } else {
       requestAnimationFrame((timestamp: number) => this.animate(timestamp))
     }
   }
