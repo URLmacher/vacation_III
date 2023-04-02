@@ -1,4 +1,9 @@
 @import './font';
+@import './colors';
+
+:root {
+  --border-radius: 17px;
+}
 
 *,
 *::before,
@@ -13,14 +18,66 @@ body {
   min-height: 100vh;
   display: flex;
   color: var(--color-text);
-  background-image: linear-gradient(to right top, #d16ba5, #c777b9, #ba83ca, #aa8fd8, #9a9ae1, #8aa7ec, #79b3f4, #69bff8, #52cffe, #41dfff, #46eefa, #5ffbf1);
   @include _font(400, 15px);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: var(--color-text);
 }
 
 #app {
   margin: 0 auto;
   flex: 1;
+}
+
+button,
+a {
+  display: inline-block;
+  text-transform: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.35s cubic-bezier(0.1, 0, 0, 1);
+  padding: 15px 20px;
+  color: #fff;
+  box-shadow: inset 0 0 0 var(--color-text), 0 0 0 var(--color-text);
+  text-shadow: 0 0 var(--color-text);
+  background: var(--color-pink);
+  background: linear-gradient(0deg, var(--color-pink) 0%, var(--color-pink-alt) 100%);
+  border: 2px solid var(--color-text);
+  border-radius: var(--border-radius);
+}
+
+button:active {
+  transform: scale(0.98);
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+button:hover {
+  border-radius: 10px;
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.2);
+  transform: scale(1.06);
+  text-shadow: 0 -1px rgba(0, 0, 0, 0.1);
+}
+
+button:visited {
+  transform: scale(1);
+}
+
+@keyframes tilt-shaking {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(5deg);
+  }
+  50% {
+    transform: rotate(0eg);
+  }
+  75% {
+    transform: rotate(-5deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
 }

@@ -4,14 +4,14 @@ export class Score {
 
   constructor(ctx: CanvasRenderingContext2D) {
     this.ctx = ctx
-    this.ctx.font = '50px Impact'
+    this.ctx.font = '50px Jumpman-1m20'
   }
 
   public draw(): void {
-    this.ctx.fillStyle = 'black'
+    this.ctx.fillStyle = '#9b5de5'
     this.ctx.fillText(`Score: ${this.points}`, 50, 75)
-    this.ctx.fillStyle = 'white'
-    this.ctx.fillText(`Score: ${this.points}`, 55, 80)
+    this.ctx.fillStyle = '#00bbf9'
+    this.ctx.fillText(`Score: ${this.points}`, 50, 72)
   }
 
   public increment(): void {

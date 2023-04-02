@@ -64,20 +64,11 @@ h6 {
 
 a,
 button {
-  @include _font(600, 10px);
+  @include _font(600, 2rem);
   letter-spacing: 1.2px;
   line-height: 1;
   text-decoration: none;
   text-transform: uppercase;
-  color: var(--color-five);
-
-  a:hover {
-    color: var(--color-three);
-  }
-  a:active,
-  a:visited {
-    color: var(--text-color-strong);
-  }
 }
 
 p {
