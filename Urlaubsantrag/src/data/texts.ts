@@ -4,5 +4,6 @@ export const texts = {
   btnText: 'Jetzt bestätigen',
   btnTextRoundTwo: 'Erneut bestätigen',
   thanks: 'Danks',
-  allConfirmed: 'Alles bestätigt'
+  allConfirmed: 'Alles bestätigt',
+  confirmed: 'BESTÄTIGT:'
 }

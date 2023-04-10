@@ -1,6 +1,8 @@
 import { Score } from './score'
 import { Target } from './target'
 import { Explosion } from './explosion'
+import { dates } from '../data/dates'
+import audioUrl from '../assets/audio/peng.mp3'
 
 export const GAME_OVER = 'game-over'
 
@@ -11,18 +13,23 @@ export class Game {
   private targets: Target[] = []
   private explosions: Explosion[] = []
   private score: Score | null = null
+  private sound: HTMLAudioElement
   private clickHandler = (e: MouseEvent) => this.handleClick(e)
 
-  private maxTargets: number = 10
+  private maxTargets: number = dates.length
   private targetsLeft: number = this.maxTargets
   private lastAnimatonTime: number = 0
   private timeToNextAnimation: number = 0
   private animationInterval: number = 500
+  private gameStarted: boolean = false
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas
     this.ctx = this.canvas.getContext('2d')
-    this.score = this.ctx ? new Score(this.ctx) : null
+    this.score = this.ctx ? new Score(this.ctx, this.maxTargets) : null
+    this.sound = new Audio()
+    this.sound.src = audioUrl
+    this.sound.volume = 0.2
   }
 
   public start(): void {
@@ -30,6 +37,7 @@ export class Game {
     this.targets = []
     this.explosions = []
     this.targetsLeft = this.maxTargets
+    this.gameStarted = true
 
     window.addEventListener('click', this.clickHandler)
     this.animate()
@@ -37,6 +45,7 @@ export class Game {
 
   public stop(): void {
     this.score?.reset()
+    this.gameStarted = false
     this.targets = []
     this.clearCanvas()
     window.removeEventListener('click', this.clickHandler)
@@ -80,7 +89,19 @@ export class Game {
     this.ctx?.clearRect(0, 0, this.canvas.width, this.canvas.height)
   }
 
+  private playSound(): void {
+    if (!this.gameStarted) return
+    if (this.sound.paused) {
+      this.sound.play()
+    } else {
+      this.sound.pause()
+      this.sound.currentTime = 0
+      this.sound.play()
+    }
+  }
+
   private handleClick(e: MouseEvent): void {
+    this.playSound()
     this.targets.forEach((part: Target) => {
       if (part.detectHit(e.x, e.y) && this.ctx) {
         this.score?.increment()

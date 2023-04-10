@@ -5,6 +5,7 @@
   import FireWork from '@/components/FireWork.vue'
   import { Game, GAME_OVER } from './game/game'
   import { texts } from './data/texts'
+  import { debounce } from './utils/helpers'
 
   let game: Game | null = null
   const canvas = ref<HTMLCanvasElement | null>(null)
@@ -17,7 +18,8 @@
     canvas.value.height = window.innerHeight
 
     game = new Game(canvas.value)
-    window.addEventListener(GAME_OVER, () => handleStopGame())
+    window.addEventListener(GAME_OVER, handleStopGame)
+    window.addEventListener('resize', handleResize)
   })
 
   const startGame = (): void => {
@@ -30,8 +32,13 @@
     newGamePlus.value = true
   }
 
+  const handleResize = debounce(() => {
+    location.reload()
+  })
+
   onBeforeUnmount((): void => {
-    window.removeEventListener(GAME_OVER, () => handleStopGame())
+    window.removeEventListener(GAME_OVER, handleStopGame)
+    window.removeEventListener('resize', handleResize)
     game?.stop()
   })
 </script>
@@ -50,12 +57,16 @@
         <FireWork />
         <p class="vacation__confirmed-text">{{ texts.allConfirmed }}</p>
       </div>
-      <button @click="startGame">{{ newGamePlus ? texts.btnTextRoundTwo : texts.btnText }}</button>
+      <button class="vacation__button" @click="startGame">
+        {{ newGamePlus ? texts.btnTextRoundTwo : texts.btnText }}
+      </button>
     </DialogOverlay>
   </main>
 </template>
 
 <style scoped lang="scss">
+  @import './src/css/breakpoints';
+
   .vacation {
     position: relative;
     top: 0;
@@ -84,34 +95,61 @@
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
+      font-size: 50px;
+
+      @include window-medium {
+        font-size: 90px;
+      }
     }
 
     &__sub-title {
       color: var(--color-blue);
       margin-bottom: 50px;
-      font-size: 56px;
+      font-size: 36px;
       animation: tilt-shaking 0.8s infinite;
+
+      @include window-medium {
+        font-size: 56px;
+      }
     }
 
     &__confirmed {
-      height: 150px;
-      width: 150px;
+      height: 90px;
+      width: 90px;
       border-radius: 50%;
       background-color: var(--color-green);
       border: 2px solid var(--color-text);
       position: absolute;
       left: 50%;
-      top: -105px;
+      top: -65px;
       transform: translateX(-50%);
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
+
+      @include window-medium {
+        height: 150px;
+        width: 150px;
+        top: -105px;
+      }
     }
 
     &__confirmed-text {
       color: var(--color-pink);
-      font-size: 26px;
+      font-size: 16px;
+
+      @include window-medium {
+        font-size: 26px;
+      }
+    }
+
+    &__button {
+      font-size: 20px;
+
+      @include window-medium {
+        font-size: 30px;
+      }
     }
   }
 </style>

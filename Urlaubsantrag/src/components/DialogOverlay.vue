@@ -35,6 +35,7 @@
       top: 50%;
       left: 50%;
       opacity: 0;
+      padding: 24px;
       transform: translate(-50%, -50%) scale(0.5);
       width: 100%;
       max-width: 640px;
