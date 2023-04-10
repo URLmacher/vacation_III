@@ -16,17 +16,18 @@ export class Game {
   private sound: HTMLAudioElement
   private clickHandler = (e: MouseEvent) => this.handleClick(e)
 
-  private maxTargets: number = dates.length
-  private targetsLeft: number = this.maxTargets
+  private MAX_TARGETS_TOTAL: number = dates.length
+  private MAX_TARGETS_ON_SCREEN: number = 5
+  private ANIMATION_INTERVAL: number = 500
+  private targetsLeft: number = this.MAX_TARGETS_TOTAL
   private lastAnimatonTime: number = 0
   private timeToNextAnimation: number = 0
-  private animationInterval: number = 500
   private gameStarted: boolean = false
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas
     this.ctx = this.canvas.getContext('2d')
-    this.score = this.ctx ? new Score(this.ctx, this.maxTargets) : null
+    this.score = this.ctx ? new Score(this.ctx, this.MAX_TARGETS_TOTAL) : null
     this.sound = new Audio()
     this.sound.src = audioUrl
     this.sound.volume = 0.2
@@ -36,7 +37,7 @@ export class Game {
     if (!this.ctx) return
     this.targets = []
     this.explosions = []
-    this.targetsLeft = this.maxTargets
+    this.targetsLeft = this.MAX_TARGETS_TOTAL
     this.gameStarted = true
 
     window.addEventListener('click', this.clickHandler)
@@ -62,7 +63,11 @@ export class Game {
     this.lastAnimatonTime = timestamp
     this.timeToNextAnimation += deltaTime
 
-    if (this.timeToNextAnimation > this.animationInterval && this.targetsLeft) {
+    if (
+      this.timeToNextAnimation > this.ANIMATION_INTERVAL &&
+      this.targetsLeft &&
+      this.targets.length < this.MAX_TARGETS_ON_SCREEN
+    ) {
       this.targets.push(new Target(this.canvas, this.ctx, dates[this.targetsLeft - 1]))
       this.targetsLeft--
       this.timeToNextAnimation = 0
@@ -78,7 +83,7 @@ export class Game {
     this.targets = this.targets.filter((part) => !part.markedForDeletion)
     this.explosions = this.explosions.filter((part) => !part.markedForDeletion)
 
-    if (this.score?.points === this.maxTargets) {
+    if (this.score?.points === this.MAX_TARGETS_TOTAL) {
       this.stop()
     } else {
       requestAnimationFrame((timestamp: number) => this.animate(timestamp))
