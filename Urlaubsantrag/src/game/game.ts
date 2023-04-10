@@ -63,7 +63,7 @@ export class Game {
     this.timeToNextAnimation += deltaTime
 
     if (this.timeToNextAnimation > this.animationInterval && this.targetsLeft) {
-      this.targets.push(new Target(this.canvas, this.ctx))
+      this.targets.push(new Target(this.canvas, this.ctx, dates[this.targetsLeft - 1]))
       this.targetsLeft--
       this.timeToNextAnimation = 0
       this.targets.sort((a, b) => a.width - b.width)

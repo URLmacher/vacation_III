@@ -7,12 +7,12 @@ export class Score {
 
   constructor(ctx: CanvasRenderingContext2D, maxPoints: number) {
     this.ctx = ctx
-    this.ctx.font = '50px Jumpman-1m20'
     this.maxPoints = maxPoints
   }
 
   public draw(): void {
     const text = `${texts.confirmed} ${this.points}/${this.maxPoints}`
+    this.ctx.font = '50px Jumpman-1m20'
     this.ctx.fillStyle = '#9b5de5'
     this.ctx.fillText(text, 50, 75)
     this.ctx.fillStyle = '#00bbf9'

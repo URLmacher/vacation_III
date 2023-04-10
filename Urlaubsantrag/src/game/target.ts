@@ -1,3 +1,4 @@
+import { formatMonth, formatDate } from '@/utils/helpers'
 import imgUrl from '../assets/sprites/target.png'
 
 export class Target {
@@ -16,15 +17,13 @@ export class Target {
   private image: HTMLImageElement
   private spriteWidth: number = this.width
   private spriteHeight: number = this.height
+  private date: string
   private frame: number = 0
   private maxFrame: number = 9
   private timeToNextAnimation: number = 0
   private animationInterval: number = Math.random() * 50 + 50
 
-  constructor(
-    canvas: HTMLCanvasElement,
-    ctx: CanvasRenderingContext2D,
-  ) {
+  constructor(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, date: string) {
     this.ctx = ctx
     this.canvas = canvas
     this.x = this.canvas.width
@@ -38,7 +37,7 @@ export class Target {
     const sizeModifier = Math.random() * 0.6 + 0.4
     this.width = this.spriteWidth * sizeModifier
     this.height = this.spriteHeight * sizeModifier
-
+    this.date = date
   }
 
   public update(deltaTime: number): void {
@@ -74,6 +73,23 @@ export class Target {
       this.width,
       this.height
     )
+
+    const monthShort = formatMonth(this.date).substring(0, 3)
+    this.ctx.fillStyle = '#9b5de5'
+    const textFontSize = Math.ceil(this.height / 4)
+    this.ctx.font = `${textFontSize}px Jumpman-1m20`
+
+    const monthShortWidth = this.ctx.measureText(monthShort).width
+    const monthShortX = Math.round(this.x + (this.width / 2.2 - monthShortWidth / 2))
+    const monthShortY = this.y + this.height / 2.8 + textFontSize
+    this.ctx.fillText(monthShort, monthShortX, monthShortY, this.spriteWidth)
+
+    this.ctx.fillStyle = '#00bbf9'
+    const dateText = formatDate(this.date)
+    const dateTextWidth = this.ctx.measureText(dateText).width
+    const dateTextX = Math.round(this.x + (this.width / 2.2 - dateTextWidth / 2))
+    const dateTextY = this.y + this.height / 2.7
+    this.ctx.fillText(dateText, dateTextX, dateTextY, this.spriteWidth)
   }
 
   public detectHit(x: number, y: number): boolean {
